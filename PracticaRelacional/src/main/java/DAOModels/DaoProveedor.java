@@ -35,7 +35,7 @@ public class DaoProveedor {
     public List consultaGeneral(){
 
         ArrayList<Proveedor> lista=new ArrayList<>();
-        String sql="select * from clientes";
+        String sql="select * from proveedores";
         try {
             DBCon=con.getConection();
             prepared=DBCon.prepareStatement(sql);
@@ -54,44 +54,34 @@ public class DaoProveedor {
         return lista;
     }
       
-       public Cliente buscarPorID(int id){
-        String sql="select * from clientes where idcliente=?";
-        Cliente cliente=new Cliente();
+       public Proveedor buscarPorID(int id){
+        String sql="select * from proveedores where idproveedor=?";
+        Proveedor proveedor=new Proveedor();
         try {
             prepared=con.getConection().prepareStatement(sql);
             prepared.setInt(1,id);
             resultset=prepared.executeQuery();
             while (resultset.next()){
-                cliente.setIdcliente(resultset.getInt("idcliente"));
-                cliente.setApellidos(resultset.getString("apellidos"));
-                cliente.setNombres(resultset.getString("nombres"));
-                cliente.setCorreo(resultset.getString("correo"));
-                cliente.setTelefono(resultset.getString("telefono"));
-                cliente.setSexo(resultset.getString("sexo"));
-                cliente.setDireccion(resultset.getString("direccion"));
-                cliente.setPais(resultset.getString("pais"));
-                cliente.setClave(resultset.getString("clave"));
+                proveedor.setIdproveedor(resultset.getInt("idproveedor"));
+                proveedor.setNombre_proveedor(resultset.getString("nombre_proveedor"));
+                proveedor.setTelefono(resultset.getString("telefono"));
+                proveedor.setContacto(resultset.getString("contacto"));
             
             }
 
         }catch (Exception e){
 
         }
-        return cliente;
+        return proveedor;
     }
        
-       public boolean agregar(Cliente cliente){
-        String sql="insert into clientes(nombres, apellidos, sexo, direccion, telefono, pais, clave, correo) values(?,?,?,?.?,?,?,?)";
+       public boolean agregar(Proveedor proveedor){
+        String sql="insert into proveedores(nombre_proveedor, telefono, contacto) values(?,?,?)";
         try {
             prepared=con.getConection().prepareStatement(sql);
-            prepared.setString(1,cliente.getNombres());
-            prepared.setString(2,cliente.getApellidos());
-            prepared.setString(3,cliente.getSexo());
-            prepared.setString(4,cliente.getDireccion());
-            prepared.setString(5,cliente.getTelefono());
-            prepared.setString(6,cliente.getPais());
-            prepared.setString(7,cliente.getClave());
-            prepared.setString(8,cliente.getCorreo());
+            prepared.setString(1,proveedor.getNombre_proveedor());
+            prepared.setString(2,proveedor.getTelefono());
+            prepared.setString(3,proveedor.getContacto());
             int filasAfectadas=prepared.executeUpdate();
             if(filasAfectadas>0){
                 return true;
@@ -103,7 +93,7 @@ public class DaoProveedor {
     }
        
         public boolean eliminar(int id){
-        String sql="delete from clientes where idcliente=?";
+        String sql="delete from proveedores where idproveedor=?";
         try {
             prepared=con.getConection().prepareStatement(sql);
             prepared.setInt(1,id);
@@ -117,19 +107,14 @@ public class DaoProveedor {
         return false;
     }
         
-        public boolean actualizar(Cliente cliente){
-        String sql="update clientes set nombres=?,apellidos=?,sexo=?,direccion=?,telefono=?,pais=?,clave=?,correo=? where idcliente=?";
+        public boolean actualizar(Proveedor proveedor){
+        String sql="update proveedores set nombre_proveedor=?,telefono=?,contacto=? where idproveedor=?";
         try {
             prepared=con.getConection().prepareStatement(sql);
-            prepared.setString(1,cliente.getNombres());
-            prepared.setString(2,cliente.getApellidos());
-            prepared.setString(3,cliente.getSexo());
-            prepared.setString(4,cliente.getDireccion());
-            prepared.setString(5,cliente.getTelefono());
-            prepared.setString(6,cliente.getPais());
-            prepared.setString(7,cliente.getClave());
-            prepared.setString(8,cliente.getCorreo());
-            prepared.setInt(9,cliente.getIdcliente());
+            prepared.setString(1,proveedor.getNombre_proveedor());
+            prepared.setString(2,proveedor.getTelefono());
+            prepared.setString(3,proveedor.getContacto());
+            prepared.setInt(4,proveedor.getIdproveedor());
             int filasAfectadas=prepared.executeUpdate();
             if(filasAfectadas>0){
                 return true;
