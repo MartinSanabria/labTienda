@@ -8,6 +8,8 @@
 
 
 <jsp:include page="./layouts/header.jsp" />
-
+<div class="container mt-3">
+    <h1>Pagina inicial</h1>
+</div>
 
 <jsp:include page="./layouts/footer.jsp" />

@@ -1,0 +1,14 @@
+Models/Producto.class
+Models/Categoria.class
+Models/Proveedor.class
+Models/DetallePedido.class
+Models/Pedido.class
+com/mycompany/practicarelacional/JakartaRestConfiguration.class
+DAOModelsAdmin/DaoClientsAdmin.class
+Models/Cliente.class
+ControllerAdmin/ProvidersController.class
+DBConection/Conexion.class
+DAOModelsAdmin/DaoCategoriaAdmin.class
+com/mycompany/practicarelacional/resources/JakartaEE8Resource.class
+DAOModelsAdmin/DaoProductosAdmin.class
+DAOModelsAdmin/DaoProveedorAdmin.class
