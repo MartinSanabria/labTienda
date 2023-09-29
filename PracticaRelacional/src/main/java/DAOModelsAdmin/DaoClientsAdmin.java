@@ -6,6 +6,8 @@ package DAOModelsAdmin;
 
 import DBConection.Conexion;
 import Models.Cliente;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,6 +87,8 @@ public class DaoClientsAdmin {
        
        public boolean agregar(Cliente cliente){
         String sql="insert into clientes(nombres, apellidos, sexo, direccion, telefono, pais, clave, correo) values(?,?,?,?,?,?,?,?)";
+        
+        String hashPassword = this.hashContrasena(cliente.getClave());
         try {
             ps=CN.getConection().prepareStatement(sql);
             ps.setString(1,cliente.getNombres());
@@ -93,7 +97,7 @@ public class DaoClientsAdmin {
             ps.setString(4,cliente.getDireccion());
             ps.setString(5,cliente.getTelefono());
             ps.setString(6,cliente.getPais());
-            ps.setString(7,cliente.getClave());
+            ps.setString(7,hashPassword);
             ps.setString(8,cliente.getCorreo());
             int filasAfectadas=ps.executeUpdate();
             if(filasAfectadas>0){
@@ -122,6 +126,7 @@ public class DaoClientsAdmin {
         
         public boolean actualizar(Cliente cliente){
         String sql="update clientes set nombres=?,apellidos=?,sexo=?,direccion=?,telefono=?,pais=?,clave=?,correo=? where idcliente=?";
+        String hashPassword = this.hashContrasena(cliente.getClave());
         try {
             ps=CN.getConection().prepareStatement(sql);
             ps.setString(1,cliente.getNombres());
@@ -130,7 +135,7 @@ public class DaoClientsAdmin {
             ps.setString(4,cliente.getDireccion());
             ps.setString(5,cliente.getTelefono());
             ps.setString(6,cliente.getPais());
-            ps.setString(7,cliente.getClave());
+            ps.setString(7,hashPassword);
             ps.setString(8,cliente.getCorreo());
             ps.setInt(9,cliente.getIdcliente());
             int filasAfectadas=ps.executeUpdate();
@@ -141,5 +146,20 @@ public class DaoClientsAdmin {
 
         }
         return false;
+    }
+        
+    private String hashContrasena(String contrasena) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(contrasena.getBytes());
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%04x", b));
+            }
+            return sb.toString().substring(0, 20);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

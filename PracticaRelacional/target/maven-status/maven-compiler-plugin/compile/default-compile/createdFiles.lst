@@ -4,7 +4,10 @@ Models/Proveedor.class
 Models/DetallePedido.class
 Models/Pedido.class
 com/mycompany/practicarelacional/JakartaRestConfiguration.class
+ControllerAdmin/ClientsController.class
 DAOModelsAdmin/DaoClientsAdmin.class
+ControllerAdmin/UserController.class
+DAOModelsAdmin/DaoUserAdmin.class
 Models/Cliente.class
 ControllerAdmin/ProvidersController.class
 DBConection/Conexion.class

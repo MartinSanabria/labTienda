@@ -41,7 +41,7 @@ public class DaoCategoriaAdmin {
             rs=ps.executeQuery();
             while(rs.next()){
                 Categoria categoria=new Categoria();
-                categoria.setIdcategoria(rs.getInt("idproveedor"));
+                categoria.setIdcategoria(rs.getInt("idcategoria"));
                 categoria.setNombre_categoria(rs.getString("nombre_categoria"));
                 lista.add(categoria);
             }
