@@ -40,7 +40,7 @@ public class DaoMain {
         Usuario user=new Usuario();
         String sql="SELECT us.usuario_id,us.nombre,us.apellido,us.telefono,us.email,us.password from usuario us \n" +
                     "inner join detalle_rol drol ON drol.usuario_id = us.usuario_id \n" +
-                    "where us.email = ? AND us.password = ? AND rol_id=2";
+                    "where us.email = ? AND us.password = ? AND drol.rol_id=2";
         try {
           ps=CN.getConection().prepareStatement(sql);
             ps.setString(1,email);
@@ -64,9 +64,9 @@ public class DaoMain {
     public Cliente consultaCliente(String email, String password){
 
         Cliente cliente=new Cliente();
-        String sql="SELECT cli.idcliente,clientes.nombres,cli.apellidos,cli.sexo,cli.direccion,cli.telefono,cli.pais,cli.correo,cli.clave from clientes cli \n" +
+        String sql="SELECT cli.idcliente,cli.nombres,cli.apellidos,cli.sexo,cli.direccion,cli.telefono,cli.pais,cli.correo,cli.clave from clientes cli \n" +
                     "inner join detalle_rol drol ON drol.cliente_id = cli.idcliente \n" +
-                    "where cli.correo = ? AND cli.clave = ? AND rol_id=1";
+                    "where cli.correo = ? AND cli.clave = ? AND drol.rol_id=1";
         try {
           ps=CN.getConection().prepareStatement(sql);
             ps.setString(1,email);

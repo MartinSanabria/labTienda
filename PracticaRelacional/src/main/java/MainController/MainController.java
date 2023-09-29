@@ -97,6 +97,7 @@ public class MainController extends HttpServlet {
                 // Si el usuario no se encontró en la tabla de usuarios, intenta buscarlo en la tabla de clientes
                     DaoMain daoClientes = new DaoMain(); // Supongamos que tienes una clase DaoClientes
                     Cliente cliente = daoClientes.consultaCliente(email, password);
+                    System.out.println(""+ cliente.getCorreo() + ", " + cliente.getClave());
                     if(cliente.getCorreo()!= null && cliente.getClave()!= null){
                         if (cliente.getCorreo().equals(request.getParameter("email")) && cliente.getClave().equals(password)) {
                         // El usuario se encontró en la tabla de clientes
