@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -88,7 +89,11 @@ public class MainController extends HttpServlet {
                 if(user.getEmail() != null && user.getPassword() != null){
                     if (user.getEmail().equals(request.getParameter("email")) && user.getPassword().equals(password)) {
                     // El usuario se encontró en la tabla de usuarios
-                    request.setAttribute("usuario", user);
+                        HttpSession session = request.getSession(true);
+                        session.setAttribute("usuario", user);
+                    String successMessage = "Inicio de sesion satisfactorio.";
+
+                    request.setAttribute("successMessage", successMessage);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("homeAdmin.jsp");
                     dispatcher.forward(request, response);
                     } 
@@ -97,19 +102,30 @@ public class MainController extends HttpServlet {
                 // Si el usuario no se encontró en la tabla de usuarios, intenta buscarlo en la tabla de clientes
                     DaoMain daoClientes = new DaoMain(); // Supongamos que tienes una clase DaoClientes
                     Cliente cliente = daoClientes.consultaCliente(email, password);
-                    System.out.println(""+ cliente.getCorreo() + ", " + cliente.getClave());
+                    
                     if(cliente.getCorreo()!= null && cliente.getClave()!= null){
                         if (cliente.getCorreo().equals(request.getParameter("email")) && cliente.getClave().equals(password)) {
                         // El usuario se encontró en la tabla de clientes
-                        request.setAttribute("cliente", cliente);
-                        RequestDispatcher dispatcher = request.getRequestDispatcher("home.jsp");
+                        HttpSession session = request.getSession(true);
+                        session.setAttribute("cliente", cliente);
+                        String successMessage = "Inicio de sesion satisfactorio.";
+
+                        request.setAttribute("successMessage", successMessage);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("/Cliente/clientView.jsp");
                         dispatcher.forward(request, response);
                     } else {
-                        // El usuario no se encontró en ninguna tabla, puedes redirigirlo a una página de error o realizar otra acción
-                        response.sendRedirect("index.jsp");
+                        String errorMessage = "Credenciales incorrectas.";
+
+                        request.setAttribute("errorMessage", errorMessage);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+                        dispatcher.forward(request, response);
                         }
                     } else { 
-                        response.sendRedirect("index.jsp");
+                        String errorMessage = "Credenciales incorrectas.";
+
+                        request.setAttribute("errorMessage", errorMessage);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+                        dispatcher.forward(request, response);
                     }
                     
                 

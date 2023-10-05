@@ -36,7 +36,7 @@
     <div class="container mt-4 text-center mb-4">
         <h3>Ingrese sus datos para registrarse.</h3>
     </div>
-        <form method="post" action="">
+        <form method="post" action="/PracticaRelacional/ClientsController?action=create">
             <div class="mb-3 row">
                 <label for="nombre" class="col-3 col-form-label">Ingrese el nombre</label>
                 <div class="col-8">
@@ -100,7 +100,7 @@
             <div class="mb-3 row mt-3">
                 <div class="offset-sm-5 col-sm-8">
                     <button type="submit" class="btn btn-success">Registrarse</button>
-                    <a href="index.jsp" class="btn btn-secondary "> Regresar</a>
+                    <a href="/PracticaRelacional/" class="btn btn-secondary "> Regresar</a>
                 </div>
             </div>
         </form>

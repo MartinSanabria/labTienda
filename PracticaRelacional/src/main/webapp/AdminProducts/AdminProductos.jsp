@@ -1,12 +1,23 @@
+<%@page import="Models.Usuario"%>
+<%@page import="Models.Categoria"%>
+<%@page import="Models.Proveedor"%>
+<%@page import="java.util.List"%>
+<%@page import="DAOModelsAdmin.DaoCategoriaAdmin"%>
+<%@page import="DAOModelsAdmin.DaoProveedorAdmin"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <jsp:include page="../layouts/header.jsp"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<c:if test="${empty usuario}">
+    <%-- La sesión no está activa, redirige al inicio de sesión --%>
+    <jsp:forward page="index.jsp" />
+</c:if>
 <div class="container mt-3">
     <h1>Control de Productos</h1>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-        <a href="/PracticaRelacional/AdminProducts/create.jsp" class="btn btn-primary">Agregar</a>
+        <a href="ProductsController?action=new" class="btn btn-primary">Agregar</a>
       </div>
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
@@ -14,10 +25,13 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Descripcion</th>
+                        <th>Proveedor</th>
+                        <th>Categoria</th>
                         <th>Precio normal</th>
                         <th>Ofertado</th>
                         <th>Precio oferta</th>
                         <th>Existencias</th>
+                        <th>Imagen</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -26,10 +40,13 @@
                     <tr>
                         <td>${producto.getNombre_producto()}</td>
                         <td>${producto.getDescripcion()}</td>
+                        <td>${productosData[producto.idproducto].nombreProveedor}</td>
+                        <td>${productosData[producto.idproducto].nombreCategoria}</td>
                         <td>${producto.getPrecio_normal()}</td>
                         <td>${producto.getOfertado()}</td>
-                        <td>${productogetPrecio_oferta()}</td>
+                        <td>${producto.getPrecio_oferta()}</td>
                         <td>${producto.getExistencias()}</td>
+                        <td><img src="${producto.getImagen()}" width="80px" height="80px" /></td>
                         <td>
                             <div class="d-flex">
                                 <a href="ProductsController?action=edit&id=${producto.idproducto}" class="btn btn-dark me-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -37,12 +54,12 @@
                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                                   </svg>
                                 </a>
-                                <form action="ProductsController?action=delete&id=${producto.idproducto}" method="post">
-                                    <button type="submit" class="btn btn-danger">
+                                <form id="deleteForm" action="ProductsController?action=delete&id=${producto.idproducto}" method="post">
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete();">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                         </svg>
-                                      </button>
+                                    </button>
                                 </form>
                             </div>  
                         </td>
@@ -53,4 +70,44 @@
         </div>
 </div>
 
+<c:if test="${not empty errorMessage}">
+    <script>
+       Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: '${errorMessage}',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    </script>
+</c:if>
+<c:if test="${not empty successMessage}">
+    <script>
+        Swal.fire({
+           position: 'top-end',
+           icon: 'success',
+           title: '${successMessage}',
+           showConfirmButton: false,
+           timer: 1500
+         });
+    </script>
+</c:if>
+        <script>
+    function confirmDelete() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si se confirma, envía el formulario
+                document.getElementById("deleteForm").submit();
+            }
+        });
+    }
+</script>
 <jsp:include page="../layouts/footer.jsp"/>

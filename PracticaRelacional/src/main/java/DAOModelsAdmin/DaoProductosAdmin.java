@@ -148,5 +148,78 @@ public class DaoProductosAdmin {
         }
         return false;
     }
+        
+        public boolean actualizarExistencias(double existencias, int idProducto){
+        String sql="update productos set existencias=? where idproducto=?";
+        try {
+            ps=CN.getConection().prepareStatement(sql);
+            ps.setDouble(1,existencias);
+            ps.setInt(2,idProducto);
+            int filasAfectadas=ps.executeUpdate();
+            if(filasAfectadas>0){
+                return true;
+            }
+        }catch (Exception e){
+
+        }
+        return false;
+    }
+        
+        public List consultarPorProveedor(int idProveedor){
+
+        ArrayList<Producto> lista=new ArrayList<>();
+        String query = "SELECT * FROM productos WHERE idproveedor = ?";
+        try {
+            ps=CN.getConection().prepareStatement(query);
+            ps.setInt(1,idProveedor);
+            rs=ps.executeQuery();
+            while(rs.next()){
+                Producto producto=new Producto();
+                producto.setIdproducto(rs.getInt("idproducto"));
+                producto.setIdcategoria(rs.getInt("idcategoria"));
+                producto.setIdproveedor(rs.getInt("idproveedor"));
+                producto.setNombre_producto(rs.getString("nombre_producto"));
+                producto.setPrecio_normal(rs.getDouble("precio_normal"));
+                producto.setOfertado(rs.getInt("ofertado"));
+                 producto.setPrecio_oferta(rs.getDouble("precio_oferta"));
+                producto.setExistencias(rs.getInt("existencias"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setImagen(rs.getString("imagen"));
+                lista.add(producto);
+            }
+        }catch (Exception e){
+
+        }
+        return lista;
+    }
+        
+    public List consultarPorCategoria(int idcategoria){
+
+        ArrayList<Producto> lista=new ArrayList<>();
+       String query = "SELECT * FROM productos WHERE idcategoria = ?";
+        try {
+            ps=CN.getConection().prepareStatement(query);
+            ps.setInt(1,idcategoria);
+            rs=ps.executeQuery();
+            while(rs.next()){
+                Producto producto=new Producto();
+                producto.setIdproducto(rs.getInt("idproducto"));
+                producto.setIdcategoria(rs.getInt("idcategoria"));
+                producto.setIdproveedor(rs.getInt("idproveedor"));
+                producto.setNombre_producto(rs.getString("nombre_producto"));
+                producto.setPrecio_normal(rs.getDouble("precio_normal"));
+                producto.setOfertado(rs.getInt("ofertado"));
+                 producto.setPrecio_oferta(rs.getDouble("precio_oferta"));
+                producto.setExistencias(rs.getInt("existencias"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setImagen(rs.getString("imagen"));
+                lista.add(producto);
+            }
+        }catch (Exception e){
+
+        }
+        return lista;
+    }
+       
     
 }

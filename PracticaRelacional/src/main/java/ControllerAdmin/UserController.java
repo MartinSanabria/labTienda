@@ -119,17 +119,24 @@ public class UserController extends HttpServlet {
                  DaoMain main = new DaoMain();
                  Usuario userFound = main.buscarPorCorreoUser(request.getParameter("email"));
                   if(userNew.getEmail().equals(userFound.getEmail())){
-                     String errorMessage = "correo existente, ingrese uno nuevo.";
+                    String errorMessage = "correo existente, ingrese uno nuevo.";
                     request.setAttribute("errorMessage", errorMessage); 
                 }else {
-                    user.agregar(userNew);
-                    Usuario userRol = main.buscarPorCorreoUser(userNew.getEmail());
-                    main.agregarRolUsuario(userRol);
-                   
-                    String successMessage = "Empleado agregado satisfactoriamente";
-                 
-                    request.setAttribute("successMessage", successMessage);
-                    }
+                      
+                   if (userNew.getTelefono().equals(userFound.getTelefono())){
+                        String errorMessage = "El numero de telefono ya se encuentra registrado..";
+                    request.setAttribute("errorMessage", errorMessage); 
+                   } else {
+                        user.agregar(userNew);
+                        Usuario userRol = main.buscarPorCorreoUser(userNew.getEmail());
+                        main.agregarRolUsuario(userRol);
+
+                        String successMessage = "Empleado agregado satisfactoriamente";
+
+                        request.setAttribute("successMessage", successMessage);
+                        }
+                    
+                }
                 
             } else {
                  String errorMessage = "Las contraseñas no coinciden";

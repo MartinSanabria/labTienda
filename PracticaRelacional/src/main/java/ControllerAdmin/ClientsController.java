@@ -9,6 +9,7 @@ import DAOModelsAdmin.DaoProveedorAdmin;
 import MainController.DaoMain;
 import Models.Cliente;
 import Models.Proveedor;
+import Models.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -64,8 +66,20 @@ public class ClientsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        try {
+            HttpSession session = request.getSession(false);
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (session == null || usuario == null) {
+        if(request.getParameter("action").equals("create")){
+             String successMessage = "Se registro satisfactoriamente";
+            request.setAttribute("successMessage", successMessage);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+            dispatcher.forward(request, response);
+        }
+       
+        response.sendRedirect("index.jsp");
+    } else {
+         try {
            if(request.getParameter("action")!=null){
                 if(request.getParameter("action").equals("edit")){
                 int idpersona=Integer.parseInt(request.getParameter("id"));
@@ -94,6 +108,8 @@ public class ClientsController extends HttpServlet {
 
             // Envía la solicitud al dispatcher.
             dispatcher.forward(request, response);
+        }
+       
     }
 
     /**
@@ -107,7 +123,8 @@ public class ClientsController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        try {
+            
          if (request.getParameter("action") != null){
             
             if(request.getParameter("action").equals("create")){
@@ -122,16 +139,23 @@ public class ClientsController extends HttpServlet {
                  DaoMain main = new DaoMain();
                  Cliente clientFound = main.buscarPorCorreo(request.getParameter("email"));
                   if(client2.getCorreo().equals(clientFound.getCorreo())){
-                     String errorMessage = "correo existente, ingrese uno nuevo.";
+                    String errorMessage = "correo existente, ingrese uno nuevo.";
                     request.setAttribute("errorMessage", errorMessage); 
                 }else {
-                    client.agregar(client2);
-                    Cliente clientrol = main.buscarPorCorreo(client2.getCorreo());
-                    main.agregarRolCliente(clientrol);
-                   
-                    String successMessage = "Cliente agregado satisfactoriamente";
-                 
-                    request.setAttribute("successMessage", successMessage);
+                     
+                    if (client2.getTelefono().equals(clientFound.getTelefono())){
+                        String errorMessage = "El numero de telefono ya se encuentra registrado..";
+                        request.setAttribute("errorMessage", errorMessage); 
+                    } else {
+                            client.agregar(client2);
+                            Cliente clientrol = main.buscarPorCorreo(client2.getCorreo());
+                            main.agregarRolCliente(clientrol);
+
+                            String successMessage = "Cliente agregado satisfactoriamente";
+
+                            request.setAttribute("successMessage", successMessage);
+                        }
+                    
                     }
                 
             } else {
@@ -151,7 +175,6 @@ public class ClientsController extends HttpServlet {
                 Cliente person = (Cliente) client.buscarPorID(idpersona);
                 person.setNombres(request.getParameter("nombre"));
                 person.setApellidos(request.getParameter("apellido"));
-                String opcionSeleccionada = request.getParameter("opcion");
                 person.setSexo(request.getParameter("sexo"));
                 person.setTelefono(request.getParameter("telefono"));
                 person.setDireccion(request.getParameter("direccion"));
@@ -192,6 +215,10 @@ public class ClientsController extends HttpServlet {
             
        
            doGet(request,response);
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        }
     }
 
     /**

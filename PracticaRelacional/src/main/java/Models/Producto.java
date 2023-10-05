@@ -13,11 +13,11 @@ private int idproducto;
 private int idcategoria;	
 private int idproveedor;	
 private String nombre_producto;		
-private Double precio_normal;	
+private double precio_normal;	
 private int ofertado;	
-private Double precio_oferta;		
+private double precio_oferta;	
 
-    public Producto(int idproducto, int idcategoria, int idproveedor, String nombre_producto, Double precio_normal, int ofertado, Double precio_oferta, int existencias, String descripcion, String imagen) {
+    public Producto(int idproducto, int idcategoria, int idproveedor, String nombre_producto, double precio_normal, int ofertado, double precio_oferta, int existencias, String descripcion, String imagen) {
         this.idproducto = idproducto;
         this.idcategoria = idcategoria;
         this.idproveedor = idproveedor;
@@ -30,7 +30,7 @@ private Double precio_oferta;
         this.imagen = imagen;
     }
 
-    public Producto(int idcategoria, int idproveedor, String nombre_producto, Double precio_normal, int ofertado, Double precio_oferta, int existencias, String descripcion, String imagen) {
+    public Producto(int idcategoria, int idproveedor, String nombre_producto, double precio_normal, int ofertado, double precio_oferta, int existencias, String descripcion, String imagen) {
         this.idcategoria = idcategoria;
         this.idproveedor = idproveedor;
         this.nombre_producto = nombre_producto;

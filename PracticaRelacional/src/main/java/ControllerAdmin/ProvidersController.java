@@ -4,8 +4,11 @@
  */
 package ControllerAdmin;
 
+import DAOModelsAdmin.DaoProductosAdmin;
 import DAOModelsAdmin.DaoProveedorAdmin;
+import Models.Producto;
 import Models.Proveedor;
+import Models.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -15,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -61,7 +65,14 @@ public class ProvidersController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+         HttpSession session = request.getSession(false);
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (session == null || usuario == null) {
+        // Si no hay sesión o el usuario no está autenticado, redirige a la página de inicio de sesión
+        response.sendRedirect("index.jsp");
+    }else {
+            try {
            if(request.getParameter("action")!=null){
                 if(request.getParameter("action").equals("edit")){
                 int idpersona=Integer.parseInt(request.getParameter("id"));
@@ -92,6 +103,8 @@ public class ProvidersController extends HttpServlet {
 
             // Envía la solicitud al dispatcher.
             dispatcher.forward(request, response);
+        }
+        
     }
 
     /**
@@ -113,6 +126,10 @@ public class ProvidersController extends HttpServlet {
                  Proveedor prov=new Proveedor(request.getParameter("nombre"),request.getParameter("telefono"),request.getParameter("email"));
                  proveedor.agregar(prov);
                  
+                 String successMessage = "Proveedor agregado satisfactoriamente";
+                 
+                 request.setAttribute("successMessage", successMessage);
+                 
             } else if(request.getParameter("action").equals("update")){
                 
                 int idpersona=Integer.parseInt(request.getParameter("id"));
@@ -124,17 +141,27 @@ public class ProvidersController extends HttpServlet {
                 person.setTelefono(request.getParameter("telefono"));
                 personaModel3.actualizar(person);
 
-                //ir al modelo para acceder a los datos
-                //obtener los datos
+                String successMessage = "Proveedor acutalizado satisfactoriamente";
+                 
+                 request.setAttribute("successMessage", successMessage);
 
 
            }else if(request.getParameter("action").equals("delete")){
-            int idpersona=Integer.parseInt(request.getParameter("id"));
-            DaoProveedorAdmin personaModel4= new DaoProveedorAdmin();
-            //obtener los datos
-            personaModel4.eliminar(idpersona);
+                int idProveedor = Integer.parseInt(request.getParameter("id"));
+                 DaoProveedorAdmin proveedorModel = new DaoProveedorAdmin();
+                 DaoProductosAdmin productoModel = new DaoProductosAdmin();
+
+                 List<Producto> productosDelProveedor = productoModel.consultarPorProveedor(idProveedor);
+
+                 if (!productosDelProveedor.isEmpty()) {
+                     String errorMessage = "Acción denegada, existen productos asociados al proveedor.";
+                     request.setAttribute("errorMessage", errorMessage);
+                 } else {
+                     proveedorModel.eliminar(idProveedor);
+                     String successMessage = "Proveedor eliminado satisfactoriamente";
+                     request.setAttribute("successMessage", successMessage);
+                 }
            
-            
             }
         }
             
